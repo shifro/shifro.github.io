@@ -18,29 +18,29 @@ body,h1{margin:0}.addbtn,.password{border-radius:5px}#auth button,.addbtn,.menu 
        <h1 class="unone">Shifro</h1>
      </div>      
       <div class="addbtn unone ifauth">
-        добавить +
+        Ð´Ð¾Ð±Ð°Ð²Ð¸ÑÑ +
       </div>
     </div>
     
     <form id="auth">
-        <input type="password" class="password" name="password" placeholder="пароль" readonly
-    onfocus="this.removeAttribute('readonly')"><button class="unone">войти</button>
+        <input type="password" class="password" name="password" placeholder="Ð¿Ð°ÑÐ¾Ð»Ñ" readonly
+    onfocus="this.removeAttribute('readonly')"><button class="unone">Ð²Ð¾Ð¹ÑÐ¸</button>
     </form>
     <form id="dataSave" class="none dataSave">
-        <p class="showAdd unone">добавление записи</p>
-            <input type="text" id="title" name="title" placeholder="заголовок" autocomplete="off" readonly
+        <p class="showAdd unone">Ð´Ð¾Ð±Ð°Ð²Ð»ÐµÐ½Ð¸Ðµ Ð·Ð°Ð¿Ð¸ÑÐ¸</p>
+            <input type="text" id="title" name="title" placeholder="Ð·Ð°Ð³Ð¾Ð»Ð¾Ð²Ð¾Ðº" autocomplete="off" readonly
     onfocus="this.removeAttribute('readonly')">
-            <textarea id="content" name="content" placeholder="текст
-#тег #тег2"></textarea>
+            <textarea id="content" name="content" placeholder="ÑÐµÐºÑÑ
+#ÑÐµÐ³ #ÑÐµÐ³2"></textarea>
             <div class="btnGroup">
-                <button type="submit" class="unone">сохранить</button>
+                <button type="submit" class="unone">ÑÐ¾ÑÑÐ°Ð½Ð¸ÑÑ</button>
                 <input type="checkbox" name="secure" id="secure">
-                <label for="secure" class="unone secureLabel">скрытые данные</label>
+                <label for="secure" class="unone secureLabel">ÑÐºÑÑÑÑÐµ Ð´Ð°Ð½Ð½ÑÐµ</label>
             </div>
         </form>
     <div class="ifauth wrapcont">
         <ul class="menu unone" onclick="handleTag(event)">
-            <li>всё</li>
+            <li>Ð²ÑÑ</li>
         </ul>
         <div id="wrapContent"></div>
     </div>
@@ -48,15 +48,15 @@ body,h1{margin:0}.addbtn,.password{border-radius:5px}#auth button,.addbtn,.menu 
 </body>
 </html>
 <script>
-const user = "1",rep = "1", apiurl = `https://api.github.com/repos/${user}/${rep}/contents/database.txt`;
+const user='shifro',rep='shifro.github.io' apiurl = `https://api.github.com/repos/${user}/${rep}/contents/database.txt`;
 let password, encryptdb, jsonara, token, sha;
 function cl(e) {console.log(e);}
 function q(e) {return document.querySelector(e);}
 function qq(e) {return document.querySelectorAll(e);}
 function escapeHTML(e) {return e.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/\n/g, "<br>");}
-function formatFileSize(e) {return e >= 1048576 ? (e / 1048576).toFixed(2) + " мб" : e >= 1024 ? (e / 1024).toFixed(2) + " кб" : e + " байт";}
+function formatFileSize(e) {return e >= 1048576 ? (e / 1048576).toFixed(2) + " Ð¼Ð±" : e >= 1024 ? (e / 1024).toFixed(2) + " ÐºÐ±" : e + " Ð±Ð°Ð¹Ñ";}
 function wrapLinksInAnchorTags(e) {return e.replace(/\S+\.\S+/g, (e) => `<a href="//${e}" target="_blank">${e}</a>`);}
-function inputJs(e) {"" != e.value ? (e.previousElementSibling.innerHTML = "+" + e.files.length) : (e.previousElementSibling.innerHTML = "файл");e.files;}
+function inputJs(e) {"" != e.value ? (e.previousElementSibling.innerHTML = "+" + e.files.length) : (e.previousElementSibling.innerHTML = "ÑÐ°Ð¹Ð»");e.files;}
 
 
 
@@ -79,11 +79,11 @@ function viewContent(e, t = 1) {
                 });
             let s = `<div class="block" id="rec${a - n - 1}">\n<h3>${e.title}</h3>\n<p>${
                 e.content.length > 300
-                    ? e.content.substring(0, 300) + "... <span class='showhide unone' onclick='spoilerBlock(this)'>показать запись</span>"
+                    ? e.content.substring(0, 300) + "... <span class='showhide unone' onclick='spoilerBlock(this)'>Ð¿Ð¾ÐºÐ°Ð·Ð°ÑÑ Ð·Ð°Ð¿Ð¸ÑÑ</span>"
                     : e.hasOwnProperty("secure")
-                    ? "<span class='showhide unone' onclick='spoilerBlock(this)'> показать запись</span>"
+                    ? "<span class='showhide unone' onclick='spoilerBlock(this)'> Ð¿Ð¾ÐºÐ°Ð·Ð°ÑÑ Ð·Ð°Ð¿Ð¸ÑÑ</span>"
                     : e.content
-            }</p>\n${viewfile}\n<div class="bottom">\n<ul class="tag unone" onclick="handleTag(event)">${r}</ul>\n<span class="del unone" onclick="removeBlock(this)">удалить</span>\n</div>\n</div>`;
+            }</p>\n${viewfile}\n<div class="bottom">\n<ul class="tag unone" onclick="handleTag(event)">${r}</ul>\n<span class="del unone" onclick="removeBlock(this)">ÑÐ´Ð°Ð»Ð¸ÑÑ</span>\n</div>\n</div>`;
             q("#wrapContent").innerHTML = 2 === t ? s + q("#wrapContent").innerHTML : q("#wrapContent").innerHTML + s;
         }
     });
@@ -106,20 +106,20 @@ function removeBlock(e) {
                 }
             })
             .catch((e) => {
-                alert(`ошибка при удалении объекта: ${e}`);
+                alert(`Ð¾ÑÐ¸Ð±ÐºÐ° Ð¿ÑÐ¸ ÑÐ´Ð°Ð»ÐµÐ½Ð¸Ð¸ Ð¾Ð±ÑÐµÐºÑÐ°: ${e}`);
             });
 }
 function handleTag(e) {
     (targetTag = e.target.innerText),
         (q("#wrapContent").innerHTML = ""),
-        "всё" === targetTag ? (jsonara.data.reverse(), viewContent(jsonara.data), jsonara.data.reverse()) : ((newArray = jsonara.tags[targetTag].map((e) => jsonara.data[e])), viewContent(newArray));
+        "Ð²ÑÑ" === targetTag ? (jsonara.data.reverse(), viewContent(jsonara.data), jsonara.data.reverse()) : ((newArray = jsonara.tags[targetTag].map((e) => jsonara.data[e])), viewContent(newArray));
 }
 function spoilerBlock(e, t = !0) {
     let n = e.closest(".block"),
         a = n.id,
         r = Number(a.replace(/\D+/g, ""));
     n.querySelector("p").innerHTML =
-        !0 === t ? jsonara.data[r].content + "<br><span class='showhide unone' onclick='spoilerBlock(this, false)'>скрыть запись</span>" : "<span class='showhide unone' onclick='spoilerBlock(this)'>показать запись</span>";
+        !0 === t ? jsonara.data[r].content + "<br><span class='showhide unone' onclick='spoilerBlock(this, false)'>ÑÐºÑÑÑÑ Ð·Ð°Ð¿Ð¸ÑÑ</span>" : "<span class='showhide unone' onclick='spoilerBlock(this)'>Ð¿Ð¾ÐºÐ°Ð·Ð°ÑÑ Ð·Ð°Ð¿Ð¸ÑÑ</span>";
 }
 async function encryptText(e, t) {
     const n = new TextEncoder().encode(t),
@@ -201,7 +201,7 @@ q("#auth").addEventListener("submit", async function (e) {
                     (token = jsonara.token);
             })
             .catch((e) => {
-                alert("Неверный пароль");
+                alert("ÐÐµÐ²ÐµÑÐ½ÑÐ¹ Ð¿Ð°ÑÐ¾Ð»Ñ");
             });
 }),
     document.addEventListener("DOMContentLoaded", async () => {
@@ -209,7 +209,7 @@ q("#auth").addEventListener("submit", async function (e) {
             let e = await req("GET", apiurl);
             e.content.length > 0 || (e = await req("GET", e.git_url, e.size)), (encryptdb = atob(e.content)), (sha = e.sha), (q("#auth").style.display = "flex");
         } catch (e) {
-            alert(`Не удалось получить БД. Ошибка ${e}`);
+            alert(`ÐÐµ ÑÐ´Ð°Ð»Ð¾ÑÑ Ð¿Ð¾Ð»ÑÑÐ¸ÑÑ ÐÐ. ÐÑÐ¸Ð±ÐºÐ° ${e}`);
         }
     }),
     q("#dataSave").addEventListener("submit", async function (e) {
@@ -218,8 +218,8 @@ q("#auth").addEventListener("submit", async function (e) {
         (timestamp = new Date().toLocaleString()), (t.time = timestamp);
         const n = new FormData(this);
         for (let [e, a] of n.entries()) "file" !== e && (t[e] = a);
-        if (t.title.length < 1) return alert("укажи заголовок");
-        if (t.content.length < 1) return alert("укажи данные");
+        if (t.title.length < 1) return alert("ÑÐºÐ°Ð¶Ð¸ Ð·Ð°Ð³Ð¾Ð»Ð¾Ð²Ð¾Ðº");
+        if (t.content.length < 1) return alert("ÑÐºÐ°Ð¶Ð¸ Ð´Ð°Ð½Ð½ÑÐµ");
         let a = /#[^\s#]+/g,
             r = t.content.match(a),
             s = [];
@@ -229,7 +229,7 @@ q("#auth").addEventListener("submit", async function (e) {
                 s.push(i);
             }
             t.tags = s;
-        } else t.tags = ["безтега"];
+        } else t.tags = ["Ð±ÐµÐ·ÑÐµÐ³Ð°"];
         (t.content = escapeHTML(t.content.trim().replace(a, ""))), (t.content = wrapLinksInAnchorTags(t.content));
         let c = jsonara.data.length;
         (jsonara.data[c] = t),
@@ -242,7 +242,7 @@ q("#auth").addEventListener("submit", async function (e) {
                     viewContent([t], 2);
                 })
                 .catch((e) => {
-                    alert(`ошибка при добавлении записи ${e}`);
+                    alert(`Ð¾ÑÐ¸Ð±ÐºÐ° Ð¿ÑÐ¸ Ð´Ð¾Ð±Ð°Ð²Ð»ÐµÐ½Ð¸Ð¸ Ð·Ð°Ð¿Ð¸ÑÐ¸ ${e}`);
                 });
     });
 
