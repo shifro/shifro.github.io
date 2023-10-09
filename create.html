@@ -93,7 +93,7 @@
 
 		async function edit() {
 			try {
-				let indexfile = `https://api.github.com/repos/${user}/${rep}/contents/indx.html`;
+				let indexfile = `https://api.github.com/repos/${user}/${rep}/contents/index.html`;
 				const getindex = await req('GET',indexfile);
 				const sha = getindex.sha;
 				const content = atob(getindex.content);
