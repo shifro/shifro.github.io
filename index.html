@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link sizes="32x32" rel="icon" type="image/ico" href="ico.ico">
+    <title>Shifro</title>
+</head>
+<body>
+    <style>
+body,h1{margin:0}.addbtn,.password{border-radius:5px}#auth button,.addbtn,.menu li{cursor:pointer}.menu,.tag{list-style:none}.menu:hover li,.tag li,.tag:hover li{color:#bdbdbd}@font-face{font-family:InterReg;font-style:normal;font-weight:400;src:url('font/inter-regular-webfont.woff2') format('woff2'),url('font/inter-regular-webfont.ttf') format('truetype')}@font-face{font-family:InterMed;font-style:normal;font-weight:400;src:url('font/inter-medium-webfont.woff2') format('woff2'),url('font/inter-medium-webfont.ttf') format('truetype')}@font-face{font-family:InterBold;font-style:normal;font-weight:400;src:url('font/inter-bold-webfont.woff2') format('woff2'),url('font/inter-bold-webfont.ttf') format('truetype')}body{font:14px InterReg,sans-serif}b,h1,h2,h3,h4{font-weight:400;font-family:InterBold,sans-serif}.none{display:none!important}#auth,.ifauth{display:none}.unone{user-select:none}.wrap{width:600px;margin:0 auto}#dataSave,.header,.logo,.menu{display:flex}.progress{height:5px;background:#000;position:fixed;max-width:100%;width:100%;top:-5px;transition:.15s}.menu,.menu li,.tag,.tag li{transition:color .15s}.logo{align-items:center}.logo svg{width:70px;margin-right:15px}h1{font:72px InterBold;letter-spacing:-.07em}.addbtn{padding:20px 0 20px 20px;font:24px InterReg;margin:13px 0 0}.header{align-items:center;justify-content:space-between;margin:30px 0 10px}#auth{margin:30px 0;justify-content:space-between;gap:20px}.password{width:100%;height:50px;padding:0 0 0 15px;border:1px solid #a3a3a3;font:18px InterReg,sans-serif}#auth button{width:140px;font-size:18px;border:none;border-radius:5px;background:#e3e3e3}.menu{padding:0;margin:0 0 50px;flex-wrap:wrap;gap:15px;font:22px InterReg;pointer-events:none}.bottom,.spoiler{font:18px InterReg}.menu li{pointer-events:auto;padding:10px 0}.menu li:hover,.tag li:hover{color:#000}#dataSave{flex-wrap:wrap;justify-content:space-between;margin:20px 0}#dataSave .showAdd{display:block;margin-top:0;font:24px InterMed,sans-serif}.bottom,.fileblock,.tag{display:flex}#dataSave .btnFile,#dataSave .btnGroup button{box-sizing:border-box;font:18px/50px InterReg;margin-right:15px;cursor:pointer}#dataSave textarea{height:150px;padding:15px;border-radius:5px;border:1px solid #a3a3a3;font:18px InterReg,sans-serif}#dataSave *{width:100%;margin-bottom:15px}#dataSave .btnGroup{display:flex;align-items:center;flex-wrap:wrap}#dataSave #secure{width:20px;cursor:pointer}#dataSave .btnGroup .secureLabel{font:16px InterReg,sans-serif;padding:15px 0 15px 5px;flex:1;cursor:pointer}#dataSave .btnGroup button{width:200px;height:50px;border:none;border-radius:5px;background:#e3e3e3}#dataSave input{height:50px;padding:0 0 0 15px;border-radius:5px;border:1px solid #a3a3a3;font:18px InterReg,sans-serif}#dataSave .btnFile{width:85px;border:1px solid #a3a3a3;height:50px;border-radius:5px;text-align:center;display:inline-block}#dataSave .inputFile{width:.1px;height:.1px;opacity:0;overflow:hidden;position:absolute;z-index:-1}.block:hover .del{opacity:1}#wrapContent h3{font:32px InterBold;margin:0 0 25px}.block{margin-bottom:50px}#wrapContent p{font:22px/28px InterReg}.tag{flex-wrap:wrap;grid-gap:20px;margin:0;padding:18px 0}.tag li{cursor:pointer}.bottom{align-items:center;justify-content:space-between}.del{cursor:pointer;opacity:0;transition:opacity .15s}.spoiler{border-bottom:1px solid #333;cursor:pointer}.showhide{color:#239aff;cursor:pointer;border-bottom:1px solid #239aff}.fileblock{text-decoration:none;color:#000;font:16px InterMed;padding:20px;border:1px solid #bfbfbf;border-radius:10px;align-items:center;margin-bottom:10px}.fileblock svg{width:30px;margin-right:10px}.fileblock span{display:block;font:14px InterMed}@media (max-width:620px){body{font:2.1vw InterReg,sans-serif}.wrap{width:90vw}h1{font:10.8vw InterBold}.addbtn{border-radius:.7vw;padding:3vw 0 3vw 3vw;font:3.6vw InterReg;margin:1.9vw 0 0}#auth{margin:4.5vw 0;gap:3vw}#dataSave input,.password{height:7.5vw;padding:.3vw 0 0 2.2vw;border-radius:.7vw;font:2.7vw InterReg,sans-serif}#auth button{width:21vw;font-size:2.7vw;border-radius:.7vw}.menu{margin-bottom:7vw;gap:2.2vw;font:3.3vw InterReg}.menu li{padding:1.5vw 0}#dataSave{margin:3vw 0}#dataSave .showAdd{font:3.6vw InterMed,sans-serif}#dataSave .btnFile,#dataSave .btnGroup button{height:7.5vw;border-radius:.7vw;font:2.7vw/7.5vw InterReg;margin-right:2.2vw}#dataSave textarea{height:22.5vw;padding:2.2vw;border-radius:.7vw;font:2.7vw InterReg,sans-serif}#dataSave *{margin-bottom:2.2vw}#dataSave #secure{width:3vw}#dataSave .btnGroup .secureLabel{font:2.4vw InterReg,sans-serif;padding:2.2vw 0 2.2vw .7vw}#dataSave .btnGroup button{width:30vw}#dataSave .btnFile{width:12.7vw}#wrapContent h3{font:4.8vw InterBold;margin:0 0 3.7vw}.block{margin-bottom:7.5vw}#wrapContent p{font:3.3vw/4.2vw InterReg}.tag{grid-gap:3vw;padding:2.7vw 0}.bottom,.spoiler{font:2.7vw InterReg}.showhide{border-bottom:.3vw solid #239aff}.fileblock{font:2.4vw InterMed;padding:3vw;border-radius:1.5vw;margin-bottom:1.5vw}.fileblock svg{width:4.5vw;margin-right:1.5vw}.fileblock span{font:2.1vw InterMed}.logo svg{width:11vw;margin-right:2vw}}
+  </style>
+  <div class="progress"></div>
+  <div class="wrap">
+    <div class="header">
+     <div class="logo">
+      <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 144 144" xmlns:v="https://vecta.io/nano"><style>.A{isolation:isolate}</style><defs><linearGradient id="A" x1="65.39" y1="94.63" x2="93.71" y2="87.05" gradientTransform="translate(121.48) rotate(-180) scale(1 -1)" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#fff"/><stop offset="1" stop-color="#443a38"/></linearGradient><linearGradient id="B" x1="87.91" x2="116.22" gradientTransform="matrix(1,0,0,1,0,0)" xlink:href="#A"/></defs><g class="A"><path d="m51.72,105.2c-2.94-20.84-9.87-25.46-13.83-28.31-3.95-2.85-5.49-6.8-5.49-6.8h-.09c1.75,9.37,3.46,16.28,6.05,21.96,4.05,7.19,8.75,14.45,13.17,19.56.38-1.05.58-3.66.19-6.41Z" fill="url(#A)"/><path d="m111.59,70.09s-1.53,3.95-5.49,6.8c-3.95,2.85-10.89,7.47-13.83,28.31-.39,2.75-.19,5.37.19,6.41,4.42-5.12,9.12-12.37,13.17-19.56,2.58-5.68,4.29-12.59,6.05-21.96h-.09Z" fill="url(#B)"/><g><path d="M75.29 101.48c-1.9 0-1.62.66-3.29.66s-1.39-.66-3.29-.66-5.49 1.76-5.49 3.95 5.49 4.39 8.78 4.39 9-2.19 9-4.39-3.81-3.95-5.71-3.95zm-5.72-53.53l-.86 37.73c-1.92 1.1-2.63 2.9-2.63 5.05 0 3.29 2.63 5.71 5.93 5.71s5.93-2.63 5.93-5.71c0-1.88-.72-3.95-2.63-5.05l-.86-37.73c7.72-1.25 14.03-7.92 14.03-7.92s-7.68-7.46-16.46-7.46-16.46 7.46-16.46 7.46 6.31 6.67 14.03 7.92zm-33.78 5.47c0 1.35 3.29 10.31 13.17 15.36 3.73 1.54 7.68 1.54 14.26 1.54-1.44-12.88-12.95-16.65-27.43-16.9zM102.99 0H41.02C18.36 0 0 18.36 0 41.01v61.97c0 22.65 18.36 41.01 41.01 41.01h61.97c22.65 0 41.01-18.36 41.01-41.01V41.01C144 18.36 125.64 0 102.99 0zm20.36 70.08h-11.76c-1.75 9.6-4.09 16.5-6.67 22.18-9.88 17.56-20.85 30.72-32.92 30.72s-23.04-13.17-32.92-30.72c-2.58-5.68-4.92-12.58-6.67-22.18H20.65c-1.33.23-2.41-.85-2.41-2.18s1.08-2.41 2.41-2.39h10.94c-1.49-9.83-2.39-22.12-2.39-37.99 0-1.1 4.39 8.12 14.26 8.12 13.17 0 16.46-9.22 28.53-9.22s15.36 9.22 28.53 9.22c9.88 0 14.26-9.22 14.26-8.12 0 15.87-.9 28.15-2.39 37.99h10.94c1.33-.02 2.41 1.06 2.41 2.39s-1.08 2.41-2.41 2.18zm-42.57.23c6.58 0 10.53 0 14.26-1.54 9.88-5.05 13.17-14.01 13.17-15.36-14.48.25-25.99 4.01-27.43 16.9z"/></g></g></svg>
+       <h1 class="unone">Shifro</h1>
+     </div>      
+      <div class="addbtn unone ifauth">
+        добавить +
+      </div>
+    </div>
+    
+    <form id="auth">
+        <input type="password" class="password" name="password" placeholder="пароль" readonly
+    onfocus="this.removeAttribute('readonly')"><button class="unone">войти</button>
+    </form>
+    <form id="dataSave" class="none dataSave">
+        <p class="showAdd unone">добавление записи</p>
+            <input type="text" id="title" name="title" placeholder="заголовок" autocomplete="off" readonly
+    onfocus="this.removeAttribute('readonly')">
+            <textarea id="content" name="content" placeholder="текст
+#тег #тег2"></textarea>
+            <div class="btnGroup">
+                <button type="submit" class="unone">сохранить</button>
+                <input type="checkbox" name="secure" id="secure">
+                <label for="secure" class="unone secureLabel">скрытые данные</label>
+            </div>
+        </form>
+    <div class="ifauth wrapcont">
+        <ul class="menu unone" onclick="handleTag(event)">
+            <li>всё</li>
+        </ul>
+        <div id="wrapContent"></div>
+    </div>
+  </div>
+</body>
+</html>
+<script>
+const user = "1",rep = "1", apiurl = `https://api.github.com/repos/${user}/${rep}/contents/database.txt`;
+let password, encryptdb, jsonara, token, sha;
+function cl(e) {console.log(e);}
+function q(e) {return document.querySelector(e);}
+function qq(e) {return document.querySelectorAll(e);}
+function escapeHTML(e) {return e.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/\n/g, "<br>");}
+function formatFileSize(e) {return e >= 1048576 ? (e / 1048576).toFixed(2) + " мб" : e >= 1024 ? (e / 1024).toFixed(2) + " кб" : e + " байт";}
+function wrapLinksInAnchorTags(e) {return e.replace(/\S+\.\S+/g, (e) => `<a href="//${e}" target="_blank">${e}</a>`);}
+function inputJs(e) {"" != e.value ? (e.previousElementSibling.innerHTML = "+" + e.files.length) : (e.previousElementSibling.innerHTML = "файл");e.files;}
+
+
+
+q(".addbtn").addEventListener("click", async function (e) {
+    q("#dataSave").classList.toggle("none");
+});
+let progressdiv = q(".progress");
+function loadanim(e) {
+    (progressdiv.style.top = "0px"), (progressdiv.style.width = e + "%");
+}
+function viewContent(e, t = 1) {
+    let n = e,
+        a = jsonara.data.length;
+    n.forEach(function (e, n) {
+        if (e) {
+            let r = (viewfile = "");
+            e.tags.length > 0 &&
+                e.tags.forEach(function (e) {
+                    r += `<li>${e}</li>`;
+                });
+            let s = `<div class="block" id="rec${a - n - 1}">\n<h3>${e.title}</h3>\n<p>${
+                e.content.length > 300
+                    ? e.content.substring(0, 300) + "... <span class='showhide unone' onclick='spoilerBlock(this)'>показать запись</span>"
+                    : e.hasOwnProperty("secure")
+                    ? "<span class='showhide unone' onclick='spoilerBlock(this)'> показать запись</span>"
+                    : e.content
+            }</p>\n${viewfile}\n<div class="bottom">\n<ul class="tag unone" onclick="handleTag(event)">${r}</ul>\n<span class="del unone" onclick="removeBlock(this)">удалить</span>\n</div>\n</div>`;
+            q("#wrapContent").innerHTML = 2 === t ? s + q("#wrapContent").innerHTML : q("#wrapContent").innerHTML + s;
+        }
+    });
+}
+function removeBlock(e) {
+    let t = e.closest(".block").id,
+        n = Number(t.replace(/\D+/g, "")),
+        a = [],
+        r = jsonara.data[n].tags;
+    for (let e of r) (jsonara.tags[e] = jsonara.tags[e].filter((e) => e !== n)), 0 === jsonara.tags[e].length && (a.push(e), delete jsonara.tags[e]);
+    delete jsonara.data[n],
+        updategit(jsonara)
+            .then((e) => {
+                if ((q("#" + t).remove(), a.length > 0)) {
+                    q(".menu")
+                        .querySelectorAll("li")
+                        .forEach((e) => {
+                            a.includes(e.textContent) && e.remove();
+                        });
+                }
+            })
+            .catch((e) => {
+                alert(`ошибка при удалении объекта: ${e}`);
+            });
+}
+function handleTag(e) {
+    (targetTag = e.target.innerText),
+        (q("#wrapContent").innerHTML = ""),
+        "всё" === targetTag ? (jsonara.data.reverse(), viewContent(jsonara.data), jsonara.data.reverse()) : ((newArray = jsonara.tags[targetTag].map((e) => jsonara.data[e])), viewContent(newArray));
+}
+function spoilerBlock(e, t = !0) {
+    let n = e.closest(".block"),
+        a = n.id,
+        r = Number(a.replace(/\D+/g, ""));
+    n.querySelector("p").innerHTML =
+        !0 === t ? jsonara.data[r].content + "<br><span class='showhide unone' onclick='spoilerBlock(this, false)'>скрыть запись</span>" : "<span class='showhide unone' onclick='spoilerBlock(this)'>показать запись</span>";
+}
+async function encryptText(e, t) {
+    const n = new TextEncoder().encode(t),
+        a = crypto.getRandomValues(new Uint8Array(12)),
+        r = crypto.getRandomValues(new Uint8Array(16)),
+        s = await genAES(e, r),
+        o = await crypto.subtle.encrypt({ name: "AES-GCM", iv: a }, s, n),
+        i = new Uint8Array(28 + o.byteLength);
+    return i.set(r), i.set(a, 16), i.set(new Uint8Array(o), 28), btoa(String.fromCharCode(...i));
+}
+async function decryptText(e, t) {
+    const n = new Uint8Array(
+            atob(t)
+                .split("")
+                .map((e) => e.charCodeAt(0))
+        ),
+        a = n.slice(0, 16),
+        r = n.slice(16, 28),
+        s = n.slice(28),
+        o = await genAES(e, a),
+        i = await crypto.subtle.decrypt({ name: "AES-GCM", iv: r }, o, s);
+    return new TextDecoder().decode(i);
+}
+async function genAES(e, t) {
+    const n = new TextEncoder().encode(e),
+        a = await crypto.subtle.importKey("raw", n, "PBKDF2", !1, ["deriveKey"]);
+    return await crypto.subtle.deriveKey({ name: "PBKDF2", salt: t, iterations: 1, hash: "SHA-256" }, a, { name: "AES-GCM", length: 256 }, !0, ["encrypt", "decrypt"]);
+}
+function req(e, t, n = !1) {
+    return new Promise(function (a, r) {
+        var s = new XMLHttpRequest();
+        s.open(e, t, !0),
+            token && s.setRequestHeader("Authorization", `token ${token}`),
+            s.setRequestHeader("Content-Type", "application/json"),
+            (s.upload.onprogress = function (e) {
+                loadanim((e.loaded / e.total) * 100);
+            }),
+            "GET" === e &&
+                n &&
+                (s.onprogress = (e) => {
+                    loadanim((e.loaded / n) * 73);
+                }),
+            (s.onload = () => {
+                (progressdiv.style.top = "-5px"), s.status >= 200 && s.status < 300 ? a(JSON.parse(s.response)) : r(s.status);
+            }),
+            (s.onerror = function () {
+                r(s.statusText);
+            }),
+            n && "PUT" === e ? (s.setRequestHeader("Content-Type", "application/json;charset=UTF-8"), s.send(JSON.stringify(n))) : s.send();
+    });
+}
+async function updategit(e) {
+    try {
+        const t = await encryptText(password, JSON.stringify(e));
+        let n = { message: "update", content: btoa(unescape(encodeURIComponent(t))), sha: sha };
+        const a = await req("PUT", apiurl, n);
+        return (sha = a.content.sha), a;
+    } catch (e) {
+        throw e;
+    }
+}
+q("#auth").addEventListener("submit", async function (e) {
+    e.preventDefault(),
+        (password = e.target.elements.password.value),
+        decryptText(password, encryptdb)
+            .then((e) => {
+                (jsonara = JSON.parse(e)),
+                    qq(".ifauth").forEach(function (e) {
+                        e.classList.remove("ifauth");
+                    }),
+                    Object.keys(jsonara.tags).forEach((e) => {
+                        let t = `<li>${e}</li>`;
+                        q(".menu").innerHTML = t + q(".menu").innerHTML;
+                    }),
+                    jsonara.data.reverse(),
+                    viewContent(jsonara.data),
+                    jsonara.data.reverse(),
+                    q("#auth").classList.add("none"),
+                    (token = jsonara.token);
+            })
+            .catch((e) => {
+                alert("Неверный пароль");
+            });
+}),
+    document.addEventListener("DOMContentLoaded", async () => {
+        try {
+            let e = await req("GET", apiurl);
+            e.content.length > 0 || (e = await req("GET", e.git_url, e.size)), (encryptdb = atob(e.content)), (sha = e.sha), (q("#auth").style.display = "flex");
+        } catch (e) {
+            alert(`Не удалось получить БД. Ошибка ${e}`);
+        }
+    }),
+    q("#dataSave").addEventListener("submit", async function (e) {
+        e.preventDefault();
+        let t = {};
+        (timestamp = new Date().toLocaleString()), (t.time = timestamp);
+        const n = new FormData(this);
+        for (let [e, a] of n.entries()) "file" !== e && (t[e] = a);
+        if (t.title.length < 1) return alert("укажи заголовок");
+        if (t.content.length < 1) return alert("укажи данные");
+        let a = /#[^\s#]+/g,
+            r = t.content.match(a),
+            s = [];
+        if (r) {
+            for (var o = 0; o < r.length; o++) {
+                var i = r[o].substring(1);
+                s.push(i);
+            }
+            t.tags = s;
+        } else t.tags = ["безтега"];
+        (t.content = escapeHTML(t.content.trim().replace(a, ""))), (t.content = wrapLinksInAnchorTags(t.content));
+        let c = jsonara.data.length;
+        (jsonara.data[c] = t),
+            t.tags.forEach(function (e) {
+                jsonara.tags[e] || ((jsonara.tags[e] = []), (q(".menu").innerHTML = `<li>${e}</li>` + q(".menu").innerHTML)), jsonara.tags[e].push(c);
+            }),
+            cl(jsonara),
+            updategit(jsonara)
+                .then((e) => {
+                    viewContent([t], 2);
+                })
+                .catch((e) => {
+                    alert(`ошибка при добавлении записи ${e}`);
+                });
+    });
+
+</script>

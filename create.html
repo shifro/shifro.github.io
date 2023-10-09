@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Document</title>
+	<link  rel="icon" type="image/ico" href="ico.ico">
+</head>
+<body>
+	<h1>Создание собственного Shifro</h1>
+	<form id="create">
+		<h3>Ник github</h3>
+		<input type="text" name="user">
+		<h3>Репозиторий</h3>
+		<input type="text" name="rep">
+		<h3>Токен</h3>
+		<input type="text" name="token">
+		<h3>Пароль шифрования</h3>
+		<input type="text" name="password">
+		<button>Создать</button>
+	</form>
+	<script>
+		function cl(e){console.log(e)}
+		function q(e){return document.querySelector(e)}
+		function qq(e){return document.querySelectorAll(e)}
+
+		let password,token,rep,user,apiurl;
+
+		q("#create").addEventListener("submit", async function (event) {
+  			event.preventDefault();
+  			const datar = {};
+
+  			// разбор формы
+  			const formData = new FormData(this);
+  			for(let [key, value] of formData.entries()) {
+  			    datar[key] = value;
+  			}
+
+  			password = datar.password;
+  			token = datar.token;
+  			rep = datar.rep;
+  			user = datar.user;
+
+  			apiurl = `https://api.github.com/repos/${user}/${rep}/contents/database.txt`;
+
+
+  			cl([password,token,rep,user,apiurl]);
+  			const jsonara = {
+  				'token': token,
+  				'tags':{'тестовыйтег':[0]},
+				'data':[{
+					'title':'Тестовый заголовок',
+					'content':'Тестовый текст',
+					'tags':['тестовыйтег']
+				}]
+  			};
+
+  			try {
+  				const createdb = await create(jsonara);
+  				const editindex = await edit();
+
+  				if (createdb === true && editindex === true) {
+  					window.location.href = 'index.html';
+  				} else {
+  					cl([createdb,editindex]);
+  				}
+
+  			} catch (error) {
+  				throw error;
+  			}
+
+
+		});
+
+		async function create(object) {
+			try {
+				const encrypt = await encryptText(password,JSON.stringify(object));
+
+				const created = {
+    			    message: 'database',
+    			    content: btoa(unescape(encodeURIComponent(encrypt))),
+    			    sha: ''
+    			};
+
+    			const reqcreate = await req('PUT', apiurl, created);
+
+    			return true;
+
+			} catch (error) {
+				throw error;
+			}
+		}
+
+		async function edit() {
+			try {
+				let indexfile = `https://api.github.com/repos/${user}/${rep}/contents/indx.html`;
+				const getindex = await req('GET',indexfile);
+				const sha = getindex.sha;
+				const content = atob(getindex.content);
+				cl(content)
+
+				const newcontent = content.replace(/user = "1",rep = "1",/, `user='${user}',rep='${rep}'`);
+				cl(newcontent);
+				const updated = {
+    			    message: 'index',
+    			    content: btoa(unescape(encodeURIComponent(newcontent))),
+    			    sha: getindex.sha
+    			};
+				const updateindex = await req('PUT',indexfile,updated);
+
+				return true;
+
+			} catch (error) {
+				throw error;
+			}
+		}
+
+
+		function req(method, url, data = false) {
+		  return new Promise(function(resolve, reject) {
+		    var xhr = new XMLHttpRequest();
+		    xhr.open(method, url, true);
+		    xhr.setRequestHeader('Authorization', `token ${token}`);
+		    xhr.setRequestHeader('Content-Type', 'application/json');
+		    	
+		    xhr.onload = () => {
+    		  cl(xhr.response);
+    		  if (xhr.status >= 200 && xhr.status < 300) {
+    		    resolve(JSON.parse(xhr.response));
+    		  } else {
+    		    cl(xhr);
+    		    reject(xhr.status);
+    		  }
+    		};
+		    
+		    xhr.onerror = function() {
+		      reject(xhr.statusText);
+		    };
+		    
+		    if (data && method === 'PUT') {
+		      xhr.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
+		      xhr.send(JSON.stringify(data));
+		    } else {
+		      xhr.send();
+		    }
+		  });
+		}
+
+async function encryptText(password, plaintext) {
+  const encoder = new TextEncoder();
+  const data = encoder.encode(plaintext);
+  const iv = crypto.getRandomValues(new Uint8Array(12));
+  const salt = crypto.getRandomValues(new Uint8Array(16));
+  const key = await genAES(password, salt);
+
+  const ciphertext = await crypto.subtle.encrypt(
+    {
+      name: "AES-GCM",
+      iv: iv
+    },
+    key,
+    data
+  );
+
+  // Объединение salt, iv и ciphertext в одном ArrayBuffer
+  const combined = new Uint8Array(16 + 12 + ciphertext.byteLength);
+  combined.set(salt);
+  combined.set(iv, 16);
+  combined.set(new Uint8Array(ciphertext), 16 + 12);
+
+  return btoa(String.fromCharCode(...combined));
+}
+
+async function genAES(password, salt) {
+  const encoder = new TextEncoder();
+  const passwordEncoded = encoder.encode(password);
+
+  const passwordKey = await crypto.subtle.importKey(
+    "raw",
+    passwordEncoded,
+    "PBKDF2",
+    false,
+    ["deriveKey"]
+  );
+
+  return await crypto.subtle.deriveKey(
+    {
+      name: "PBKDF2",
+      salt: salt,
+      iterations: 1,
+      hash: "SHA-256"
+    },
+    passwordKey,
+    {
+      name: "AES-GCM",
+      length: 256
+    },
+    true,
+    ["encrypt", "decrypt"]
+  );
+}
+	</script>	
+</body>
+</html>
