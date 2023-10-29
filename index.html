@@ -44,15 +44,631 @@
 </body>
 </html>
 <script>
-const user="shifro",rep="shifro.github.io",giturl="https://api.github.com/repos/shifro/shifro.github.io/contents/",dbfile="database.txt",dburl=giturl+"database.txt";let password,encryptdb,jsonara,token,sha,id,maxfilesize=0,wc=q(".console .wrap");function cl(t){console.log(t)}function formatValue(t){if("string"==typeof t){if(t.length>100)return t.slice(0,100)+"..."}else if(Array.isArray(t))return t.map(formatValue);else if("object"==typeof t){let a={};for(let n in t)a[n]=formatValue(t[n]);return a}return t}function q(t){return document.querySelector(t)}function qq(t){return document.querySelectorAll(t)}function escapeHTML(t){return t.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/\n/g,"<br>")}function formatFileSize(t){return t>=1048576?(t/1048576).toFixed(2)+" мб":t>=1024?(t/1024).toFixed(2)+" кб":t+" байт"}function wrapLinksInAnchorTags(t){return t.replace(/\S+\.\S+/g,t=>`<a href="//${t}" target="_blank">${t}</a>`)}function inputJs(t){""!=t.value?t.previousElementSibling.innerHTML=`+ ${t.files.length}`:t.previousElementSibling.innerHTML="файл",t.files}async function getFile(t,a){let n=jsonara.data[t],s=[],i=await req("GET",n.files[a].url,n.files[a].size),r=JSON.parse(atob(i.content));for(var l=0;l<r.length;l++){let o=await decrypt(r[l]);s.push(o)}let c=s.join("");n.files[a].type.includes("image")?q("body").insertAdjacentHTML("afterbegin",`<div class="shadow" onclick="this.remove();"><img src="${c}" class="imagepreview"></div>`):base2file(n.files[a].name,s.join(""))}function viewContent(t,a=1){let n=jsonara.data.length;t.forEach(function(t,s){if(t){let i=viewfile="";t.files&&t.files.length>0&&t.files.forEach(function(t,a){viewfile+=`<div class="fileblock" onclick="getFile(${n-s-1},${a})"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"><defs><style>.a{fill:none;stroke:#000000;stroke-linecap:round;stroke-linejoin:round;}</style></defs><path class="a" d="M39.5,15.5h-9a2,2,0,0,1-2-2v-9h-18a2,2,0,0,0-2,2v35a2,2,0,0,0,2,2h27a2,2,0,0,0,2-2Z"></path><line class="a" x1="28.5" y1="4.5" x2="39.5" y2="15.5"></line></svg><div>${t.name}<span>${formatFileSize(t.size)}</span></div></div>`}),t.tags.length>0&&t.tags.forEach(function(t){i+=`<li>${t}</li>`});let r=`<div class="block" id="rec${n-s-1}">
-<h3>${t.title}</h3>
+const user = "shifro";
+const rep = "shifro";
+const giturl = `https://api.github.com/repos/${user}/${rep}/contents/`;
+const dbfile = 'database.txt';
+const dburl = giturl + dbfile;
+let password, encryptdb, jsonara, token, sha, id;
+let maxfilesize = 0;
+let wc = q(".console .wrap");
+function cl(e) {
+  console.log(e);
+}
 
-      <p>${t.content.length>300?t.content.substring(0,300)+"... <span class='showhide unone' onclick='spoilerBlock(this)'>показать запись</span>":t.hasOwnProperty("secure")?"<span class='showhide unone' onclick='spoilerBlock(this)'> показать запись</span>":t.content}</p>
+function formatValue(value) {
+  if (typeof value === 'string') {
+    // Если значение - строка, и она превышает 30 символов, обрезаем её
+    if (value.length > 100) {
+      return value.slice(0, 100) + '...';
+    }
+  } else if (Array.isArray(value)) {
+    // Если значение - массив, рекурсивно обрабатываем его элементы
+    return value.map(formatValue);
+  } else if (typeof value === 'object') {
+    // Если значение - объект, рекурсивно обрабатываем его свойства
+    const formattedObject = {};
+    for (const key in value) {
+      formattedObject[key] = formatValue(value[key]);
+    }
+    return formattedObject;
+  }
+  // Если значение не требует обрезки, возвращаем его как есть
+  return value;
+}
 
-      ${viewfile}
-<div class="bottom">
-<ul class="tag unone" onclick="handleTag(event)">${i}</ul>
-<span class="del unone" onclick="removeBlock(this)">удалить</span>
-</div>
-</div>`;whereinsert=1===a?"beforeend":"afterbegin",q("#wrapContent").insertAdjacentHTML(whereinsert,r)}})}function req(t,a,n=!1){return cl({"Отправка запроса":{e:t,t:a,n}}),new Promise(function(s,i){var r=new XMLHttpRequest;r.open(t,a+"?r="+Math.random(),!0),token&&r.setRequestHeader("Authorization",`token ${token}`),r.setRequestHeader("Content-Type","application/json"),r.upload.onprogress=function(t){loadanim(t.loaded/t.total*100)},"GET"===t&&n&&(r.onprogress=t=>{cl("Получение данных"),loadanim(t.loaded/n*73)}),r.onload=()=>{cl({"API запрос выполнен":JSON.parse(r.response)}),loadanim(),r.status>=200&&r.status<300?s(JSON.parse(r.response)):i(r.status)},r.onerror=function(){i(r.statusText),loadanim()},"PUT"===t||"DELETE"===t?(r.setRequestHeader("Content-Type","application/json;charset=UTF-8"),r.send(JSON.stringify(n))):r.send()})}function readFileAsync(t){return new Promise(a=>{let n=new FileReader;n.readAsDataURL(t),n.onload=function(){a({name:t.name,type:t.type,size:t.size,data:n.result})}})}async function cryptoFiles(t){try{let a=[],n=await limitCryptoApi(maxfilesize),s=n;cl(`Всего файлов ${t.length}`);for(let i=0;i<t.length;i++){let r=[],l=0;cl(`Чтение файла: ${i+1}`);let o=await readFileAsync(t[i]);for(cl(`Шифрование файла`);l<o.data.length;){let c=await encrypt(o.data.slice(l,l+s));r.push(c),l+=s,loadanim(l/o.data.length*100)}loadanim(),cl(`Файл зашифрован`);let d=await updategit(JSON.stringify(r),`${id}_${i}.shfro`);cl({"Файл отправлен":d}),a.push({name:o.name,type:o.type,size:o.size,sha:d.content.sha,url:d.content.git_url})}return cl(`Все файлы обработаны`),a}catch(h){throw cl({"Catch в cryptoFiles":h}),h}}async function updategit(t,a="db"){try{let n={message:"shifro",content:btoa(unescape(encodeURIComponent(t))),sha:sha};url="db"===a?dburl:`${giturl}files/${a}`;let s=await req("PUT",url,n);return"db"===a&&(sha=s.content.sha),s}catch(i){throw cl({"Catch в updategit":i}),t}}async function removeBlock(t){cl("Удаление записи");let a=t.closest(".block").id,n=Number(a.replace(/\D+/g,"")),s=[],i=jsonara.data[n].tags;if(jsonara.data[n].files)for(var r=0;r<jsonara.data[n].files.length;r++)await req("DELETE",`${giturl}files/${n}_${r}.shfro`,{message:"shifro",sha:jsonara.data[n].files[r].sha});for(let l of i)jsonara.tags[l]=jsonara.tags[l].filter(t=>t!==n),0===jsonara.tags[l].length&&(s.push(l),delete jsonara.tags[l]);delete jsonara.data[n];let o=await encrypt(JSON.stringify(jsonara));updategit(o).then(t=>{q("#"+a).remove(),s.length>0&&q(".menu").querySelectorAll("li").forEach(t=>{s.includes(t.textContent)&&t.remove()})}).catch(t=>{cl({"Catch в removeblock":t}),alert(`ошибка при удалении объекта: ${t}`)}),cl("запись удалена")}function handleTag(t){"LI"===t.target.nodeName&&(targetTag=t.target.innerText,q("#wrapContent").innerHTML="","всё"===targetTag?(jsonara.data.reverse(),viewContent(jsonara.data),jsonara.data.reverse()):viewContent((newArray=jsonara.tags[targetTag].map(t=>jsonara.data[t])).reverse()))}function spoilerBlock(t,a=!0){let n=t.closest(".block"),s=Number(n.id.replace(/\D+/g,""));n.querySelector("p").innerHTML=!0===a?jsonara.data[s].content+"<br><span class='showhide unone' onclick='spoilerBlock(this, false)'>скрыть запись</span>":"<span class='showhide unone' onclick='spoilerBlock(this)'>показать запись</span>"}document.addEventListener("DOMContentLoaded",async()=>{try{let t=await req("GET",dburl);if(t.content.length>0||(t=await req("GET",t.git_url,t.size)),t.content)encryptdb=atob(t.content),sha=t.sha,q("#auth").style.display="flex";else throw"Контента нет"}catch(a){cl({"catch DOMContentLoaded":a}),alert(`Не удалось получить БД. Ошибка ${e}`)}}),q("#dataSave").addEventListener("submit",async function(t){t.preventDefault();let a=document.getElementById("inputFile");inputJs(a);try{let n={};id=jsonara.data.length,timestamp=(new Date).toLocaleString(),n.time=timestamp;let s=new FormData(this);for(let[i,r]of s.entries())"file"!==i?n[i]=r:maxfilesize=r.size>maxfilesize?r.size:maxfilesize;if(n.title.length<1)throw"укажи заголовок";if(n.content.length<1)throw"укажи данные";let l=/#[^\s#]+/g,o=n.content.match(l),c=[];if(o){for(var d=0;d<o.length;d++){var h=o[d].substring(1);c.push(h)}n.tags=c}else n.tags=["безтега"];n.content=escapeHTML(n.content.trim().replace(l,"")),n.content=wrapLinksInAnchorTags(n.content);let p=q("#inputFile");if(console.dir(p.files),p.files.length>0)try{let u=await cryptoFiles(p.files);n.files=u}catch(f){throw cl({"catch в форме во время шифровании файлов":f}),f}jsonara.data[id]=n,n.tags.forEach(function(t){!jsonara.tags[t]&&(jsonara.tags[t]=[],q(".menu").insertAdjacentHTML("afterbegin",`<li>${t}</li>`),q(".menu").clientHeight<q(".menu").scrollHeight&&q(".menu").insertAdjacentHTML("afterend",`<a class="showtags" onclick="showtags(this)">все теги</a>`)),jsonara.tags[t].push(id)}),cl({"Массив с данными подготовлен":jsonara});let g=await encrypt(JSON.stringify(jsonara));updategit(g).then(a=>(cl(`Данные успешно добавлены`),t.target.reset(),p.onchange(),viewContent([n],2))).catch(t=>{throw cl({"catch в форме во время updategit":t}),t})}catch(y){alert(`Ошибка при сохранении. ${y}`),cl({"catch в конце формы":y})}}),q("#auth").addEventListener("submit",async function(t){t.preventDefault(),decrypt(encryptdb,password=t.target.elements.password.value).then(t=>{jsonara=JSON.parse(t),qq(".ifauth").forEach(function(t){t.classList.remove("ifauth")}),Object.keys(jsonara.tags).forEach(t=>{q(".menu").insertAdjacentHTML("afterbegin",`<li>${t}</li>`)}),q(".menu").clientHeight<q(".menu").scrollHeight&&q(".menu").insertAdjacentHTML("afterend",`<a class="showtags" onclick="showtags()">все теги</a>`),jsonara.data.reverse(),viewContent(jsonara.data),jsonara.data.reverse(),q("#auth").classList.add("none"),token=jsonara.token,cl({"Успешная авторизация":jsonara})}).catch(t=>{cl({"Catch в #auth":t}),alert("Неверный пароль")})}),q(".addbtn").addEventListener("click",t=>q("#dataSave").classList.toggle("none"));let psdiv=q(".progress");function loadanim(t=!1){!1!==t?(psdiv.style.top="0px",psdiv.style.width=t+"%"):psdiv.style.top="-5px"}function showtags(){q(".menu").style.height="auto",q(".wrapcont").removeChild(q(".showtags"))}async function encrypt(t,a=password){try{let n=(new TextEncoder).encode(t),s=crypto.getRandomValues(new Uint8Array(12)),i=crypto.getRandomValues(new Uint8Array(16)),r=await genAES(a,i),l=await crypto.subtle.encrypt({name:"AES-GCM",iv:s},r,n),o=new Uint8Array(28+l.byteLength);return o.set(i),o.set(s,16),o.set(new Uint8Array(l),28),btoa(String.fromCharCode(...o))}catch(c){throw cl({"Catch в encrypt":c}),c}}async function decrypt(t,a=password){try{let n=new Uint8Array(atob(t).split("").map(t=>t.charCodeAt(0))),s=n.slice(0,16),i=n.slice(16,28),r=n.slice(28),l=await genAES(a,s),o=await crypto.subtle.decrypt({name:"AES-GCM",iv:i},l,r);return(new TextDecoder).decode(o)}catch(c){throw cl({"catch в decrypt":c}),c}}async function genAES(t,a){let n=(new TextEncoder).encode(t),s=await crypto.subtle.importKey("raw",n,"PBKDF2",!1,["deriveKey"]);return await crypto.subtle.deriveKey({name:"PBKDF2",salt:a,iterations:1,hash:"SHA-256"},s,{name:"AES-GCM",length:256},!0,["encrypt","decrypt"])}const limitCryptoApi=async t=>{cl(t),cl("Проверка максимального размера файла");let a=1e5,n=0;try{if(loadanim(20),t<1e6)try{return await encrypt("a".repeat(t)),loadanim(40),cl(`Размер файла, меньше максимального`),t}catch(s){cl({"catch в limitCryptoApi 1":s}),loadanim(50)}for(loadanim(60);;){a+=1e4;await encrypt("a".repeat(a)),n=a}}catch(i){return loadanim(70),cl({"catch в limitCryptoApi 2":i,"Максимальный размер":n}),n}};function base2file(t,a){let n=a.split(","),s=n[0].split(":")[1],i=n[1],r=atob(i),l=new Uint8Array(r.length);for(let o=0;o<r.length;o++)l[o]=r.charCodeAt(o);let c=new Blob([l],{type:s}),d=new File([c],t,{type:s}),h=document.createElement("a");h.href=URL.createObjectURL(d),h.download=d.name,document.body.appendChild(h),h.click(),document.body.removeChild(h)}
+
+function q(e) {return document.querySelector(e);}
+function qq(e) {return document.querySelectorAll(e);}
+function escapeHTML(e) {return e.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/\n/g, "<br>");}
+function formatFileSize(e) {return e >= 1048576 ? (e / 1048576).toFixed(2) + " мб" : e >= 1024 ? (e / 1024).toFixed(2) + " кб" : e + " байт";}
+function wrapLinksInAnchorTags(e) {return e.replace(/\S+\.\S+/g, (e) => `<a href="//${e}" target="_blank">${e}</a>`);}
+function inputJs(e) {"" != e.value ? (e.previousElementSibling.innerHTML = `+ ${e.files.length}`) : (e.previousElementSibling.innerHTML = "файл");e.files;}
+
+async function getFile(id, fileid) {
+  let data = jsonara.data[id];
+  let decryptchunk;
+  let fileChunks = [];
+  
+
+  // получаем массив данных
+  let getfromgit = await req("GET", data.files[fileid].url, data.files[fileid].size);
+
+  let acb64 = JSON.parse(atob(getfromgit.content));
+  
+
+  for (var i = 0; i < acb64.length; i++) {
+      let decryptchunk = await decrypt(acb64[i]);
+      fileChunks.push(decryptchunk);
+  }
+
+  let compfile = fileChunks.join('');
+  if (data.files[fileid].type.includes('image')) {
+    q("body").insertAdjacentHTML("afterbegin", `<div class="shadow" onclick="this.remove();"><img src="${compfile}" class="imagepreview"></div>`);
+  } else {
+    base2file(data.files[fileid].name, fileChunks.join(''));
+  }
+
+
+
+
+}
+// вывод записей
+function viewContent(e, t = 1) {
+  let a = jsonara.data.length;
+  e.forEach(function (e, n) {
+    if (e) {
+      // перебираем файлы
+      let r = viewfile = "";
+      if (e.files && e.files.length > 0) {
+        e.files.forEach(function (file, nfile) {
+          //let imgholder = file.type.includes('image') ?  : `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="48" height="48"><path d="M12.5 4C10.03 4 8 6.03 8 8.5v31c0 2.47 2.03 4.5 4.5 4.5h23c2.47 0 4.5-2.03 4.5-4.5v-21a1.5 1.5 0 0 0-.44-1.06l-.015-.016L26.56 4.439A1.5 1.5 0 0 0 25.5 4h-13zm0 3H24v8.5c0 2.47 2.03 4.5 4.5 4.5H37v19.5c0 .847-.653 1.5-1.5 1.5h-23c-.846 0-1.5-.653-1.5-1.5v-31c0-.846.654-1.5 1.5-1.5zM27 9.12l7.879 7.88h-6.38c-.846 0-1.5-.654-1.5-1.5V9.12z"/></svg>`;
+
+          viewfile += `<div class="fileblock" onclick="getFile(${a - n - 1},${nfile})"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"><defs><style>.a{fill:none;stroke:#000000;stroke-linecap:round;stroke-linejoin:round;}</style></defs><path class="a" d="M39.5,15.5h-9a2,2,0,0,1-2-2v-9h-18a2,2,0,0,0-2,2v35a2,2,0,0,0,2,2h27a2,2,0,0,0,2-2Z"></path><line class="a" x1="28.5" y1="4.5" x2="39.5" y2="15.5"></line></svg><div>${file.name}<span>${formatFileSize(file.size)}</span></div></div>`
+        });
+
+      }
+      // перебираем теги
+      if (e.tags.length > 0) {
+        e.tags.forEach(function (e) {
+          r += `<li>${e}</li>`;
+        });
+      }
+      let s = `<div class="block" id="rec${a - n - 1}">\n<h3>${e.title}</h3>\n
+      <p>${
+                e.content.length > 300
+                    ? e.content.substring(0, 300) + "... <span class='showhide unone' onclick='spoilerBlock(this)'>показать запись</span>"
+                    : e.hasOwnProperty("secure")
+                    ? "<span class='showhide unone' onclick='spoilerBlock(this)'> показать запись</span>"
+                    : e.content
+      }</p>\n
+      ${viewfile}\n<div class="bottom">\n<ul class="tag unone" onclick="handleTag(event)">${r}</ul>\n<span class="del unone" onclick="removeBlock(this)">удалить</span>\n</div>\n</div>`;
+      whereinsert = t === 1 ? 'beforeend' : 'afterbegin';
+      q("#wrapContent").insertAdjacentHTML(whereinsert, s);
+    }
+  });
+}
+
+
+// API запрос
+function req(e, t, n = false) {
+  cl({"Отправка запроса":{e,t,n}});
+  return new Promise(function (a, r) {
+    var s = new XMLHttpRequest;
+    s.open(e, t, true);
+    if (token) {
+      s.setRequestHeader("Authorization", `token ${token}`);
+    }
+    s.setRequestHeader("Content-Type", "application/json");
+    s.upload.onprogress = function (e) {
+      loadanim(e.loaded / e.total * 100);
+    };
+    if (e === "GET" && n) {
+      s.onprogress = e => {
+        cl("Получение данных");
+        loadanim(e.loaded / n * 73);
+      };
+    }
+    s.onload = () => {
+      cl({'API запрос выполнен':JSON.parse(s.response)});
+      loadanim()
+      if (s.status >= 200 && s.status < 300) {
+        a(JSON.parse(s.response));
+      } else {
+        r(s.status);
+      }
+    };
+    s.onerror = function () {
+      r(s.statusText);
+      loadanim();
+    };
+    if (e === "PUT" || e === "DELETE") {
+      s.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+      s.send(JSON.stringify(n));
+    } else {
+      s.send();
+    }
+  });
+}
+
+// первая загрузка
+document.addEventListener("DOMContentLoaded", async () => {
+  try {
+    let e = await req("GET", dburl + "?r=" + Math.random());
+    if (!(e.content.length > 0)) {
+      e = await req("GET", e.git_url, e.size);
+    }
+
+    if (e.content) {
+      encryptdb = atob(e.content);
+      sha = e.sha;
+      q("#auth").style.display = "flex";
+    } else {
+      throw('Контента нет');
+    }
+    
+  } catch (error) {
+    cl({"catch DOMContentLoaded": error});
+    alert(`Не удалось получить БД. Ошибка ${e}`);
+  }
+});
+
+function readFileAsync(file) {
+    return new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = function () {
+            resolve({
+                "name": file.name,
+                "type": file.type,
+                "size": file.size,
+                "data": reader.result
+            });
+        };
+    });
+}
+
+// сохранение
+q("#dataSave").addEventListener("submit", async function (e) {
+  e.preventDefault();
+  const inputFile = document.getElementById("inputFile");
+  const files = inputJs(inputFile);
+  try {
+    // объявляем объект
+    let t = {};
+    // назначем id
+    id = jsonara.data.length;
+
+    // указываем время
+    timestamp = (new Date).toLocaleString();
+    t.time = timestamp;
+
+    // перебор formdata
+    const n = new FormData(this);
+    for (let [e, a] of n.entries()) {
+      if (e !== "file") {
+        t[e] = a;
+      } else {
+        maxfilesize = a.size > maxfilesize ? a.size : maxfilesize;
+      }
+    }
+
+    // валидация
+    if (t.title.length < 1) {
+      throw("укажи заголовок");
+    }
+    if (t.content.length < 1) {
+      throw("укажи данные");
+    }
+
+    // вытаскиваем хештеги
+    let a = /#[^\s#]+/g;
+    let r = t.content.match(a);
+    let s = [];
+    if (r) {
+      for (var o = 0; o < r.length; o++) {
+        var i = r[o].substring(1);
+        s.push(i);
+      }
+      t.tags = s;
+    } else {
+      t.tags = ["безтега"];
+    }
+  
+    // обработка текста
+    t.content = escapeHTML(t.content.trim().replace(a, ""));
+    t.content = wrapLinksInAnchorTags(t.content);
+
+    // работа с файлами
+    let inputFiles = q("#inputFile");
+    console.dir(inputFiles.files);
+    if (inputFiles.files.length > 0) {
+      try {
+        let arafiles = await cryptoFiles(inputFiles.files);
+        t.files = arafiles;
+      } catch (fileError) {
+        cl({'catch в форме во время шифровании файлов':fileError});
+        throw(fileError);
+      }
+    }
+
+    // заполняем данные
+    jsonara.data[id] = t;
+  
+    // формируем теги
+    t.tags.forEach(function (e) {
+      if (!jsonara.tags[e]) {
+        jsonara.tags[e] = [];
+        q(".menu").insertAdjacentHTML("afterbegin", `<li>${e}</li>`);
+        if (q(".menu").clientHeight < q(".menu").scrollHeight) {
+          q(".menu").insertAdjacentHTML("afterend", `<a class="showtags" onclick="showtags(this)">все теги</a>`);
+        }
+      }
+      jsonara.tags[e].push(id);
+    });
+  
+    // отправка
+    cl({"Массив с данными подготовлен": jsonara});
+    const encryara = await encrypt(JSON.stringify(jsonara));
+    updategit(encryara).then(u => {
+      cl(`Данные успешно добавлены`);
+      e.target.reset(); inputFiles.onchange();
+      return viewContent([t], 2);
+    }).catch(err => {
+      cl({'catch в форме во время updategit':err});
+      throw(err);
+    });
+
+  } catch (error) {
+    alert(`Ошибка при сохранении. ${error}`)
+    cl({'catch в конце формы':error});
+  }
+    
+});
+
+async function cryptoFiles(files) {
+  try {
+    const encryptedFiles = [];
+    const lca = await limitCryptoApi(maxfilesize);
+    const chunkSize = lca;
+
+    // цикл
+    cl(`Всего файлов ${files.length}`);
+    for (let i = 0; i < files.length; i++) {
+      const fileChunks = [];
+      let offset = 0;
+
+      cl(`Чтение файла: ${i+1}`);
+      let filedata = await readFileAsync(files[i]);
+
+      cl(`Шифрование файла`);
+      while (offset < filedata.data.length) {
+          let chunk = filedata.data.slice(offset, offset + chunkSize);
+          let encryptedChunk = await encrypt(chunk);
+          fileChunks.push(encryptedChunk);
+          offset += chunkSize;
+          loadanim(offset / filedata.data.length * 100);
+      }
+      loadanim();
+      cl(`Файл зашифрован`);
+
+      let uploadflie = await updategit(JSON.stringify(fileChunks),`${id}_${i}.shfro`);
+      cl({'Файл отправлен':uploadflie});
+      //throw('bitch');
+      encryptedFiles.push({
+        "name": filedata.name,
+        "type": filedata.type,
+        "size": filedata.size,
+        "sha": uploadflie.content.sha,
+        "url": uploadflie.content.git_url
+      });
+
+    }
+    cl(`Все файлы обработаны`);
+    return encryptedFiles;
+  } catch (error) {
+    cl({'Catch в cryptoFiles':error});
+    throw(error);
+  }
+}
+
+// функция сохранения
+async function updategit(e, file = 'db') {
+  try {
+    // шифрование
+    let n = {message: "shifro", content: btoa(unescape(encodeURIComponent(e))), sha: sha};
+
+    // определение url
+    url = file === 'db' ? dburl : `${giturl}files/${file}`;
+    // запрос
+    const a = await req("PUT", url, n);
+    // выдача sha
+    if (file === 'db') sha = a.content.sha;
+
+    return a;
+  } catch (error) {
+    cl({'Catch в updategit':error});
+    throw e;
+  }
+}
+
+// удаление блока
+async function removeBlock(e) {
+  cl("Удаление записи");
+  let t = e.closest(".block").id;
+  let n = Number(t.replace(/\D+/g, ""));
+  let a = [];
+  let r = jsonara.data[n].tags;
+
+  // удаление файла с git
+  if (jsonara.data[n].files) {
+    for (var i = 0; i < jsonara.data[n].files.length; i++) {
+      await req("DELETE", `${giturl}files/${n}_${i}.shfro`, {message: "shifro", sha: jsonara.data[n].files[i].sha});
+    }
+  }
+  
+
+  // Удаление тегов
+  for (let e of r) {
+    jsonara.tags[e] = jsonara.tags[e].filter(e => e !== n);
+    if (jsonara.tags[e].length === 0) {
+      a.push(e);
+      delete jsonara.tags[e];
+    }
+  }
+
+  // удаление записи из массива
+  delete jsonara.data[n];
+
+  // сохранение обновлённой информации на git
+  const encryara = await encrypt(JSON.stringify(jsonara));
+  updategit(encryara).then(e => {
+    q("#" + t).remove();
+    if (a.length > 0) {
+      q(".menu").querySelectorAll("li").forEach(e => {
+        if (a.includes(e.textContent)) {
+          e.remove();
+        }
+      });
+    }
+  }).catch(error => {
+    cl({'Catch в removeblock':error});
+    alert(`ошибка при удалении объекта: ${error}`);
+  });
+  cl("запись удалена");
+}
+
+// отображение записей по тегу
+function handleTag(e) {
+  if (e.target.nodeName === "LI") {
+    targetTag = e.target.innerText;
+    q("#wrapContent").innerHTML = "";
+    if (targetTag === "всё") {
+      jsonara.data.reverse();
+      viewContent(jsonara.data);
+      jsonara.data.reverse();
+    } else {
+      newArray = jsonara.tags[targetTag].map(e => jsonara.data[e]);
+      viewContent(newArray.reverse());
+    }
+  }
+}
+
+// скрытие и отображение статьи
+function spoilerBlock(e, t = true) {
+  let n = e.closest(".block");
+  let a = n.id;
+  let r = Number(a.replace(/\D+/g, ""));
+  n.querySelector("p").innerHTML = t === true ? jsonara.data[r].content + "<br><span class='showhide unone' onclick='spoilerBlock(this, false)'>скрыть запись</span>" : "<span class='showhide unone' onclick='spoilerBlock(this)'>показать запись</span>";
+}
+
+// авторизация
+q("#auth").addEventListener("submit", async function (e) {
+  e.preventDefault();
+  password = e.target.elements.password.value;
+  decrypt(encryptdb, password).then(e => {
+    jsonara = JSON.parse(e);
+    qq(".ifauth").forEach(function (e) {
+      e.classList.remove("ifauth");
+    });
+    Object.keys(jsonara.tags).forEach(e => {
+      q(".menu").insertAdjacentHTML("afterbegin", `<li>${e}</li>`);
+    });
+    if (q(".menu").clientHeight < q(".menu").scrollHeight) {
+      q(".menu").insertAdjacentHTML("afterend", `<a class="showtags" onclick="showtags()">все теги</a>`);
+    }
+    jsonara.data.reverse();
+    viewContent(jsonara.data);
+    jsonara.data.reverse();
+    q("#auth").classList.add("none");
+    token = jsonara.token;
+    cl({'Успешная авторизация':jsonara});
+  }).catch(error => {
+    cl({'Catch в #auth':error});
+    alert("Неверный пароль");
+  });
+});
+
+// отображение формы записи
+q(".addbtn").addEventListener("click", (e) => q("#dataSave").classList.toggle("none"));
+
+// анимация прогресса
+let psdiv = q(".progress");
+function loadanim(e = false) {
+  if (e !== false) {
+    psdiv.style.top = "0px";
+    psdiv.style.width = e + "%";
+  } else {
+    psdiv.style.top = "-5px";
+  }
+}
+
+// вывод всех тегов
+function showtags() {
+  q(".menu").style.height = "auto";
+  q(".wrapcont").removeChild(q(".showtags"));
+}
+
+
+//криптография
+async function encrypt(t,e=password) {
+  try {
+     const n = (new TextEncoder).encode(t);
+    const a = crypto.getRandomValues(new Uint8Array(12));
+    const r = crypto.getRandomValues(new Uint8Array(16));
+    const s = await genAES(e, r);
+    const o = await crypto.subtle.encrypt({name: "AES-GCM", iv: a}, s, n);
+    const i = new Uint8Array(28 + o.byteLength);
+    i.set(r);
+    i.set(a, 16);
+    i.set(new Uint8Array(o), 28);
+    return btoa(String.fromCharCode(...i));
+  } catch (error) {
+    cl({'Catch в encrypt':error});
+    throw(error);
+  }
+ 
+}
+
+/*async function encrypt(password = 123, plaintext) {
+  cl('Начало шифрования');
+  try {
+    const encoder = new TextEncoder();
+    const data = encoder.encode(plaintext);
+    const iv = crypto.getRandomValues(new Uint8Array(12));
+    const salt = crypto.getRandomValues(new Uint8Array(16));
+    const key = await genAES(password, salt);
+  
+    const ciphertext = await crypto.subtle.encrypt(
+      {
+        name: "AES-GCM",
+        iv: iv
+      },
+      key,
+      data
+    );
+  
+    // Объединение salt, iv и ciphertext в одном ArrayBuffer
+    const combined = new Uint8Array(16 + 12 + ciphertext.byteLength);
+    combined.set(salt);
+    combined.set(iv, 16);
+    combined.set(new Uint8Array(ciphertext), 16 + 12);
+  
+    cl('Шифрование окончено');
+    return btoa(String.fromCharCode(...combined));
+  } catch (error) {
+    cl({'Catch в encrypt':error});
+    throw(error);
+  }
+  
+}
+*/
+
+
+async function decrypt(t, e = password) {
+  try {
+    const n = new Uint8Array(atob(t).split("").map(e => e.charCodeAt(0)));
+    const a = n.slice(0, 16);
+    const r = n.slice(16, 28);
+    const s = n.slice(28);
+    const o = await genAES(e, a);
+    const i = await crypto.subtle.decrypt({name: "AES-GCM", iv: r}, o, s);
+    return (new TextDecoder).decode(i);
+  } catch (error) {
+    cl({"catch в decrypt": error});
+    throw(error);
+  }
+}
+
+
+async function genAES(e, t) {
+  const n = (new TextEncoder).encode(e);
+  const a = await crypto.subtle.importKey("raw", n, "PBKDF2", false, ["deriveKey"]);
+  return await crypto.subtle.deriveKey({name: "PBKDF2", salt: t, iterations: 1, hash: "SHA-256"}, a, {name: "AES-GCM", length: 256}, true, ["encrypt", "decrypt"]);
+}
+
+const limitCryptoApi = async (maxsize) => {
+  cl(maxsize);
+  cl('Проверка максимального размера файла');
+    let currentLength = 100000;
+    let maximumLength = 0;
+
+    try {
+        loadanim(20);
+        if (maxsize < 1000000) {
+          try {
+            let segment = 'a'.repeat(maxsize);
+            const encryptedText = await encrypt(segment);
+            loadanim(40);
+            cl(`Размер файла, меньше максимального`);
+            return maxsize;
+          } catch (e) {
+            cl({'catch в limitCryptoApi 1':e});
+            loadanim(50);
+          }
+        }
+        
+
+        loadanim(60);
+        while (true) {
+            // Увеличиваем длину для следующей итерации
+            currentLength += 10000; // Добавляем 10 КБ
+
+            // Генерируем строку заданной длины
+            let segment = 'a'.repeat(currentLength);
+            
+            // Шифруем строку
+            const encryptedText = await encrypt(segment);
+            //cl(encryptedText);
+
+            maximumLength = currentLength;
+        }
+
+    } catch (error) {
+      loadanim(70);
+      cl({'catch в limitCryptoApi 2':error, 'Максимальный размер':maximumLength});
+      return maximumLength;
+    }
+};
+
+
+function base2file(name, base) {
+  // Ваша base64-строка
+  const base64String = base; // Здесь ваша строка
+  
+  // Разделяем строку по запятой, чтобы получить тип данных и саму base64-строку
+  const parts = base64String.split(',');
+  const contentType = parts[0].split(':')[1];
+  const rawBase64 = parts[1];
+  
+  // Декодируем base64 в бинарные данные
+  const decodedData = atob(rawBase64);
+  
+  // Преобразуем бинарные данные в массив байт
+  const byteArray = new Uint8Array(decodedData.length);
+  for (let i = 0; i < decodedData.length; i++) {
+    byteArray[i] = decodedData.charCodeAt(i);
+  }
+  
+  // Создаем Blob объект
+  const blob = new Blob([byteArray], { type: contentType });
+  
+  // Теперь blob можно использовать, например, для создания объекта File
+  const file = new File([blob], name, { type: contentType });
+  
+  // Теперь у вас есть файл "file" для использования по вашему усмотрению
+  // Создаем ссылку
+  const downloadLink = document.createElement('a');
+  downloadLink.href = URL.createObjectURL(file);
+  downloadLink.download = file.name;
+  
+  // Добавляем ссылку к документу
+  document.body.appendChild(downloadLink);
+  
+  // Запускаем скачивание
+  downloadLink.click();
+  
+  // Удаляем ссылку из документа (необязательно, но хорошая практика)
+  document.body.removeChild(downloadLink);
+}
 </script>
